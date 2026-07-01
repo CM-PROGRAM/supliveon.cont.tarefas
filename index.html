@@ -1398,13 +1398,9 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
       <div class="input-group"><label>Nome Cliente</label><input type="text" id="ate-cliente" placeholder="Nome do cliente"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="input-group"><label>Data Abertura</label><input type="text" id="ate-data" placeholder="00/00/00" maxlength="8" oninput="fmtData(this)"></div>
-        <div class="input-group"><label>Motivo</label>
+        <div class="input-group"><label style="display:flex;align-items:center;justify-content:space-between;"><span>Motivo</span><span style="display:flex;gap:4px;"><button type="button" onclick="addAteMotivo()" title="Adicionar novo motivo" style="background:var(--bg-surface);border:1px solid var(--border-light);border-radius:5px;color:var(--text-secondary);width:18px;height:18px;line-height:1;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;">+</button><button type="button" onclick="removeAteMotivo()" title="Excluir motivo selecionado" style="background:var(--bg-surface);border:1px solid var(--border-light);border-radius:5px;color:var(--text-secondary);width:18px;height:18px;line-height:1;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;">−</button></span></label>
           <select id="ate-motivo">
             <option value="">— Selecionar —</option>
-            <option>Pedido não entregue</option>
-            <option>Cancelamento</option>
-            <option>Extravio</option>
-            <option>Endereço errado</option>
           </select>
         </div>
       </div>
@@ -1435,6 +1431,7 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
           <option>Drog. Pacheco</option>
           <option>Web Continental</option>
           <option>RD Marketplace</option>
+          <option>WhatsApp (ChatWoot)</option>
         </select>
       </div>
       <div id="ate-rastreio-fields" style="display:none;grid-template-columns:1fr 1fr;gap:12px;">
@@ -7309,10 +7306,59 @@ function toggleAteRastreio(){
   }
 }
 
+function getAllAteMotivos(){
+  const base=['Pedido não entregue','Cancelamento','Extravio','Endereço errado'];
+  const custom=(appState.customMotivosAte||[]);
+  return base.concat(custom.filter(m=>!base.includes(m)));
+}
+
+function renderAteMotivoOptions(selected){
+  const sel=document.getElementById('ate-motivo');
+  if(!sel) return;
+  const val=selected!==undefined?selected:sel.value;
+  sel.innerHTML='<option value="">— Selecionar —</option>'+
+    getAllAteMotivos().map(m=>`<option value="${m}">${m}</option>`).join('');
+  sel.value=val||'';
+}
+
+function removeAteMotivo(){
+  const sel=document.getElementById('ate-motivo');
+  const val=sel?sel.value:'';
+  if(!val){showToast('Selecione um motivo para excluir','warn');return;}
+  const base=['Pedido não entregue','Cancelamento','Extravio','Endereço errado'];
+  if(base.includes(val)){showToast('Motivos padrão não podem ser excluídos','warn');return;}
+  const custom=(appState.customMotivosAte||[]);
+  const idx=custom.findIndex(m=>m.toLowerCase()===val.toLowerCase());
+  if(idx===-1){showToast('Motivo não encontrado na lista','warn');return;}
+  if(!confirm('Excluir o motivo "'+val+'"?')) return;
+  custom.splice(idx,1);
+  appState.customMotivosAte=custom;
+  saveState(appState);
+  renderAteMotivoOptions('');
+  showToast('✓ Motivo excluído','success');
+}
+
+function addAteMotivo(){
+  const nome=(prompt('Novo motivo de atendimento:')||'').trim();
+  if(!nome) return;
+  const all=getAllAteMotivos();
+  if(all.some(m=>m.toLowerCase()===nome.toLowerCase())){
+    showToast('Esse motivo já existe','warn');
+    renderAteMotivoOptions(nome);
+    return;
+  }
+  if(!appState.customMotivosAte) appState.customMotivosAte=[];
+  appState.customMotivosAte.push(nome);
+  saveState(appState);
+  renderAteMotivoOptions(nome);
+  showToast('✓ Motivo "'+nome+'" adicionado','success');
+}
+
 function openAteModal(id){
   const overlay=document.getElementById('ate-modal-overlay');
   overlay.style.display='block';
   ateUpdateHora();
+  renderAteMotivoOptions('');
   document.getElementById('ate-edit-id').value=id||'';
   if(id){
     const d=(appState.tasks.atendimentos||[]).find(x=>x.id===id);
@@ -7325,7 +7371,7 @@ function openAteModal(id){
       document.getElementById('ate-rastreio-cod').value=d.rastreioCod||'';
       document.getElementById('ate-rastreio-link').value=d.rastreioLink||'';
       document.getElementById('ate-data').value=d.data||'';
-      document.getElementById('ate-motivo').value=d.motivo||'';
+      renderAteMotivoOptions(d.motivo||'');
       const descEl=document.getElementById('ate-ultima-desc');
       const dataLbl=document.getElementById('ate-ultima-data');
       if(descEl) descEl.value=d.ultimaDesc||'';
