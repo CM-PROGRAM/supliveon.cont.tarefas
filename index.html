@@ -1179,6 +1179,17 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
       </div>
     </div>
 
+    <!-- PROGRESSO HOJE (colaboradores, não-master) -->
+    <div class="tab-panel" id="tab-progresso">
+      <div class="section-header">
+        <span class="section-title">Progresso Atividades Hoje</span>
+      </div>
+      <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:14px;">⚡ Progresso Atividades Hoje</div>
+        <div id="dash-tabs-progress-user" style="display:flex;flex-direction:column;gap:12px;"></div>
+      </div>
+    </div>
+
     <!-- ADMIN -->
     <div class="tab-panel" id="tab-admin">
       <div class="section-header">
@@ -1200,7 +1211,7 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
         <!-- 3D BAR CHART -->
         <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:18px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-            <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);">📊 Histórico 7 Dias</span>
+            <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);">📊 Histórico da Semana (Seg a Sex)</span>
             <div style="display:flex;gap:12px;align-items:center;">
               <span style="font-size:10px;color:var(--green);font-family:var(--font-mono);display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--green);"></span>Concluídas</span>
               <span style="font-size:10px;color:var(--accent);font-family:var(--font-mono);display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--accent);"></span>Pendentes</span>
@@ -1208,18 +1219,13 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
           </div>
           <canvas id="bar3d-chart" height="200" style="width:100%;display:block;border-radius:8px;"></canvas>
           <div id="bar3d-axis" style="display:flex;justify-content:space-around;margin-top:6px;padding:0 8px;"></div>
+          <div id="bar3d-dia-detalhe" style="display:none;margin-top:14px;padding:12px 14px;background:var(--bg-active);border:1px solid var(--border);border-radius:10px;"></div>
         </div>
 
         <!-- PROGRESS POR ABA -->
         <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:18px;">
           <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:14px;">⚡ Progresso Atividades Hoje</div>
           <div id="dash-tabs-progress" style="display:flex;flex-direction:column;gap:12px;"></div>
-        </div>
-
-        <!-- USER PERFORMANCE -->
-        <div id="dash-users" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:14px;">👥 Desempenho por Usuário</div>
-          <div id="dash-users-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;"></div>
         </div>
       </div>
 
@@ -1363,6 +1369,7 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
           <option>Merc. Livre Vitalife</option>
           <option>Merc. Livre VXShop</option>
           <option>Magalu 4Vita</option>
+          <option>Magalu VixSupps</option>
           <option>Drog. São Paulo</option>
           <option>Drog. Pacheco</option>
           <option>Web Continental</option>
@@ -2144,22 +2151,23 @@ function toggleActivityPanel(){
 function archiveDay(s){
   const d=s.lastReset; if(!d) return;
   let total=0,done=0,late=0;
+  const pendentes=[];
   function countTasks(arr){
     arr.forEach(t=>{
-      if(t.items){t.items.forEach(i=>{total++;if(i.done){done++;if(i.doneAt&&parseInt(i.doneAt.split(':')[0])>=18)late++;}});}
-      else{total++;if(t.done){done++;if(t.doneAt&&parseInt(t.doneAt.split(':')[0])>=18)late++;}}
+      if(t.items){t.items.forEach(i=>{total++;if(i.done){done++;if(i.doneAt&&parseInt(i.doneAt.split(':')[0])>=18)late++;}else{pendentes.push(i.text||i.title||'—');}});}
+      else{total++;if(t.done){done++;if(t.doneAt&&parseInt(t.doneAt.split(':')[0])>=18)late++;}else{pendentes.push(t.text||t.title||'—');}}
     });
   }
   if(s.tasks){
     // whatsapp is now grouped
-    (s.tasks.whatsapp||[]).forEach(g=>(g.items||[]).forEach(i=>{total++;if(i.done){done++;if(i.doneAt&&parseInt(i.doneAt.split(':')[0])>=18)late++;}}));
+    (s.tasks.whatsapp||[]).forEach(g=>(g.items||[]).forEach(i=>{total++;if(i.done){done++;if(i.doneAt&&parseInt(i.doneAt.split(':')[0])>=18)late++;}else{pendentes.push(i.text||i.title||'—');}}));
     (s.tasks.plataformas||[]).forEach(g=>countTasks([g]));
     countTasks(s.tasks.envios||[]);
     (s.tasks.anuncios||[]).forEach(g=>countTasks([g]));
   }
   if(!s.weekHistory) s.weekHistory={};
-  s.weekHistory[d]={total,done,late,inTime:done-late};
-  const keys=Object.keys(s.weekHistory).sort().slice(-7);
+  s.weekHistory[d]={total,done,late,inTime:done-late,pendentes};
+  const keys=Object.keys(s.weekHistory).sort().slice(-10);
   const trimmed={};keys.forEach(k=>trimmed[k]=s.weekHistory[k]);
   s.weekHistory=trimmed;
 }
@@ -2430,6 +2438,7 @@ function buildTabs(){
     {id:'anuncios',   icon:'🏷', label:'Produtos',              perm:'anuncios'},
     {id:'envios',     icon:'📦', label:'Rastreio',              perm:'envios'},
     {id:'tarefas',    icon:'📌', label:'Tarefas Atribuídas',   perm:'tarefas'},
+    {id:'progresso',  icon:'⚡', label:'Progresso Hoje',        perm:null, hideFromMaster:true},
     {id:'notas',      icon:'📝', label:'Bloco de Notas',        perm:null},
     {id:'admin',      icon:'⚙', label:'Adm. Master',           perm:'admin'}
   ];
@@ -2444,7 +2453,7 @@ function buildTabs(){
   nav.appendChild(lbl);
 
   tabs.forEach(tb=>{
-    if(tb.perm===null||currentUser.master||currentUser.perms.includes(tb.perm)){
+    if((tb.perm===null||currentUser.master||currentUser.perms.includes(tb.perm)) && !(tb.hideFromMaster && currentUser.master)){
       const btn=document.createElement('button');
       btn.className='tab-btn';btn.dataset.tab=tb.id;
       btn.innerHTML=`<span class="tab-icon">${tb.icon}</span><span class="tab-label">${tb.label}</span>`;
@@ -2453,6 +2462,7 @@ function buildTabs(){
         if(tb.id==='devolucoes'){ try{renderDev();}catch(e){console.warn('renderDev:',e);} setTimeout(()=>{try{renderDevStats();}catch(e){}},80); }
         if(tb.id==='atendimentos'){ try{renderAte();}catch(e){console.warn('renderAte:',e);} setTimeout(()=>{try{renderAteStats();}catch(e){}},80); }
         if(tb.id==='tarefas'){ try{renderAtividades();}catch(e){console.warn('renderAtividades:',e);} }
+        if(tb.id==='progresso'){ try{renderProgressoAbas('dash-tabs-progress-user');}catch(e){console.warn('renderProgressoAbas:',e);} }
         if(tb.id==='notas'){ try{initNotas();}catch(e){console.warn('initNotas:',e);} }
         if(tb.id==='admin'){ try{ renderAdmin(); renderUsersGrid(); }catch(e){ console.warn('admin render:',e); } }
       };
@@ -4345,7 +4355,7 @@ function makeCompleteBtn(task, onMarkDone, onUnmark){
 }
 
 /* ===== DEVOLUÇÕES ===== */
-const DEV_PLATAFORMAS=['Shopee Suplenium','Shopee Primevitaminas','Merc. Livre Vitalife','Merc. Livre VXShop','Magalu 4Vita','Drog. São Paulo','Drog. Pacheco','Web Continental','RD Marketplace'];
+const DEV_PLATAFORMAS=['Shopee Suplenium','Shopee Primevitaminas','Merc. Livre Vitalife','Merc. Livre VXShop','Magalu 4Vita','Magalu VixSupps','Drog. São Paulo','Drog. Pacheco','Web Continental','RD Marketplace'];
 const DEV_MOTIVOS=['Arrependimento','Diferente do anunciado','Danificado','Endereço errado','Comprador ausente','Atraso no envio'];
 
 function previewDevFotos(input){
@@ -4449,7 +4459,8 @@ function saveDev(){
       linkBling,
       fotos,
       criadoEm:editId?undefined:nowTimeStr(),
-      criadoPor:editId?undefined:currentUser.name
+      criadoPor:editId?undefined:currentUser.name,
+      ordemManual:editId?undefined:Date.now()
     };
     if(editId){
       const idx=appState.tasks.devolucoes.findIndex(x=>x.id===editId);
@@ -4457,6 +4468,7 @@ function saveDev(){
         rec.criadoEm=appState.tasks.devolucoes[idx].criadoEm;
         rec.criadoPor=appState.tasks.devolucoes[idx].criadoPor;
         rec.workflow=appState.tasks.devolucoes[idx].workflow;
+        rec.ordemManual=appState.tasks.devolucoes[idx].ordemManual;
         rec.atualizadoPor=currentUser.name;
         rec.atualizadoEm=nowTimeStr();
         appState.tasks.devolucoes[idx]=rec;
@@ -4519,6 +4531,8 @@ function renderDev(){
 
   // Split: concluídas go to folder, active stays in main
   const all = appState.tasks.devolucoes||[];
+  all.forEach((d,idx)=>{ if(typeof d.ordemManual!=='number') d.ordemManual=idx; });
+  all.sort((a,b)=>(a.ordemManual||0)-(b.ordemManual||0));
   const active = all.filter(d=>d.workflow!=='concluida'&&d.workflow!=='finalizada');
   const concluidas = all.filter(d=>d.workflow==='concluida'||d.workflow==='finalizada');
 
@@ -4573,6 +4587,19 @@ function renderDev(){
   });
 }
 
+function reorderDevolucoes(draggedId, targetId){
+  const arr = appState.tasks.devolucoes||[];
+  const sorted = arr.slice().sort((a,b)=>(a.ordemManual||0)-(b.ordemManual||0));
+  const fromIdx = sorted.findIndex(x=>x.id===draggedId);
+  const toIdx = sorted.findIndex(x=>x.id===targetId);
+  if(fromIdx===-1||toIdx===-1) return;
+  const [moved] = sorted.splice(fromIdx,1);
+  sorted.splice(toIdx,0,moved);
+  sorted.forEach((item,i)=>{ item.ordemManual = i; });
+  saveState(appState);
+  renderDev();
+}
+
 function buildDevCardFull(d, isConcluida){
   const isCM = currentUser && currentUser.key==='cmandrade';
   const isCR = currentUser && currentUser.key==='carlosred';
@@ -4586,6 +4613,29 @@ function buildDevCardFull(d, isConcluida){
   card.onmouseover=()=>{if(!isConcluida){card.style.transform='translateY(-2px)';card.style.boxShadow='0 8px 32px rgba(0,0,0,0.5),0 0 24px rgba(59,130,246,0.1),inset 0 1px 0 rgba(255,255,255,0.1)';}};
   card.onmouseout=()=>{card.style.transform='';card.style.boxShadow=`0 4px 24px rgba(0,0,0,0.4)${isConcluida?',0 0 20px rgba(34,197,94,0.08)':''},inset 0 1px 0 rgba(255,255,255,0.08)`;};
   const _devshine=document.createElement('div');_devshine.style.cssText='position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);pointer-events:none;';card.appendChild(_devshine);
+
+  // ── Arrastar para reordenar (só master) ─────────────────────────────
+  if(isMaster && !isConcluida){
+    card.draggable=true;
+    card.dataset.devId=d.id;
+    card.style.cursor='grab';
+    card.addEventListener('dragstart',e=>{
+      e.dataTransfer.setData('text/plain', d.id);
+      e.dataTransfer.effectAllowed='move';
+      card.style.opacity='0.4';
+    });
+    card.addEventListener('dragend',()=>{ card.style.opacity=''; });
+    card.addEventListener('dragover',e=>{ e.preventDefault(); card.style.boxShadow='0 0 0 2px var(--accent),0 4px 24px rgba(0,0,0,0.4)'; });
+    card.addEventListener('dragleave',()=>{ card.style.boxShadow=''; });
+    card.addEventListener('drop',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      card.style.boxShadow='';
+      const draggedId=e.dataTransfer.getData('text/plain');
+      if(!draggedId||draggedId===d.id) return;
+      reorderDevolucoes(draggedId, d.id);
+    });
+  }
 
   // ── Card header ────────────────────────────────────────────────────
   const hdr=document.createElement('div');hdr.style.cssText='display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
@@ -5364,9 +5414,108 @@ function renderTimeGoals(){
   }
 }
 
+function renderProgressoAbas(containerId){
+  const tabsProgressEl = document.getElementById(containerId);
+  if(!tabsProgressEl) return;
+  tabsProgressEl.innerHTML='';
+  const abas=[
+    {label:"Marketplaces", icon:'🛒', items:(appState.tasks.plataformas||[]).flatMap(g=>g.items.map(i=>({...i,_grupo:g.group})))},
+    {label:'Rastreios',     icon:'📦', items:(appState.tasks.envios||[]).map(i=>({...i,_grupo:null}))},
+  ];
+
+  // Vendas WhatsApp
+  const todayKey  = todayStr();
+  const vendasHoje= (appState.vendasWpp && appState.vendasWpp[todayKey]) || 0;
+  const wppCol    = vendasHoje>=4?'var(--green)':vendasHoje>=2?'var(--amber)':'var(--accent)';
+  const wppPct    = Math.min(100, vendasHoje>=4?100:vendasHoje>=2?60:vendasHoje>=1?25:0);
+  const wppRow    = document.createElement('div');
+  wppRow.style.cssText='display:grid;grid-template-columns:160px 1fr 70px;align-items:center;gap:12px;';
+  wppRow.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:15px;">💬</span>
+      <span style="font-size:13px;color:var(--text-secondary);font-weight:600;">Vendas WhatsApp</span>
+    </div>
+    <div style="background:var(--bg-active);border-radius:6px;height:10px;overflow:hidden;position:relative;">
+      <div style="height:100%;width:${wppPct}%;background:${wppCol};border-radius:6px;transition:width .6s ease;box-shadow:0 0 8px ${wppCol}66;"></div>
+    </div>
+    <div style="font-size:15px;font-family:var(--font-mono);font-weight:700;color:${wppCol};text-align:right;">${vendasHoje} <span style="font-size:10px;color:var(--text-muted);">pedidos</span></div>`;
+  tabsProgressEl.appendChild(wppRow);
+
+  abas.forEach(a=>{
+    const total = a.items.length;
+    const pendentes = a.items.filter(i=>i.repeats>1?(i.execs||[]).length<(i.repeats||1):!i.done);
+    const done  = total-pendentes.length;
+    const pct   = total>0?Math.round((done/total)*100):0;
+    const col   = pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--accent)';
+    const wrap  = document.createElement('div');
+    const row   = document.createElement('div');
+    row.style.cssText='display:grid;grid-template-columns:160px 1fr 56px;align-items:center;gap:12px;';
+    row.innerHTML=`
+      <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" title="Ver pendências">
+        <span style="font-size:15px;">${a.icon}</span>
+        <span class="progresso-aba-label" style="font-size:13px;color:var(--text-secondary);font-weight:600;display:flex;align-items:center;gap:4px;">${a.label}<span class="progresso-aba-chevron" style="font-size:9px;color:var(--text-muted);transition:transform .15s;display:inline-block;">▾</span></span>
+      </div>
+      <div style="background:var(--bg-active);border-radius:6px;height:10px;overflow:hidden;position:relative;">
+        <div style="height:100%;width:${pct}%;background:${col};border-radius:6px;transition:width .6s ease;box-shadow:0 0 8px ${col}66;"></div>
+      </div>
+      <div style="font-size:14px;font-family:var(--font-mono);font-weight:700;color:${col};text-align:right;">${pct}%</div>`;
+    wrap.appendChild(row);
+
+    const detailWrap=document.createElement('div');
+    detailWrap.style.cssText='display:none;margin:6px 0 0 26px;padding:8px 12px;background:var(--bg-active);border:1px solid var(--border);border-radius:8px;';
+    if(!pendentes.length){
+      detailWrap.innerHTML='<div style="font-size:11px;color:var(--green);font-family:var(--font-mono);">✓ Tudo concluído hoje!</div>';
+    } else {
+      detailWrap.innerHTML='<ul style="margin:0;padding-left:16px;list-style:disc;display:flex;flex-direction:column;gap:6px;">'+
+        pendentes.map(i=>{
+          const grupoBadge = i._grupo ? `<span class="pendente-grupo-badge" data-grupo="${i._grupo}" style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;margin-right:6px;white-space:nowrap;">${i._grupo}</span>` : '';
+          return `<li style="font-size:11px;color:var(--text-secondary);font-family:var(--font-mono);line-height:1.4;list-style:none;margin-left:-16px;">${grupoBadge}${i.text||i.title||'—'}</li>`;
+        }).join('')+
+        '</ul>';
+      detailWrap.querySelectorAll('.pendente-grupo-badge').forEach(b=>applyPltBadge(b, b.dataset.grupo));
+    }
+    wrap.appendChild(detailWrap);
+
+    const labelRow=row.querySelector('.progresso-aba-label').parentElement;
+    labelRow.onclick=()=>{
+      const open=detailWrap.style.display==='block';
+      detailWrap.style.display=open?'none':'block';
+      const chev=row.querySelector('.progresso-aba-chevron');
+      if(chev) chev.style.transform=open?'':'rotate(180deg)';
+    };
+
+    tabsProgressEl.appendChild(wrap);
+  });
+}
+
+function showPendentesDia(dateKey, h){
+  const box=document.getElementById('bar3d-dia-detalhe');
+  if(!box) return;
+  const dateFmt=new Date(dateKey+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
+  const pendentes=(h&&h.pendentes)||null;
+  let html=`<div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;text-transform:capitalize;">📅 ${dateFmt}</div>`;
+  if(!h || (h.total||0)===0){
+    html+='<div style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);">Sem registros para este dia.</div>';
+  } else if(pendentes===null){
+    html+='<div style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);">Este dia foi registrado antes desta função existir — sem detalhe das tarefas, só o total (%).</div>';
+  } else if(pendentes.length===0){
+    html+='<div style="font-size:12px;color:var(--green);font-family:var(--font-mono);">✓ Todas as tarefas foram concluídas neste dia!</div>';
+  } else {
+    html+=`<div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:6px;">${pendentes.length} não concluída${pendentes.length>1?'s':''}:</div>`;
+    html+='<ul style="margin:0;padding-left:16px;list-style:disc;display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;">'+
+      pendentes.map(t=>`<li style="font-size:11px;color:var(--text-secondary);font-family:var(--font-mono);line-height:1.4;">${t}</li>`).join('')+
+      '</ul>';
+  }
+  box.innerHTML=html;
+  box.style.display='block';
+}
+
 function renderDash(){
   const hist  = appState.weekHistory || {};
-  const days  = Object.keys(hist).sort().slice(-7);
+  const days  = Object.keys(hist).sort().filter(d=>{
+    const dow = new Date(d+'T12:00:00').getDay(); // 0=Dom, 6=Sáb
+    return dow!==0 && dow!==6;
+  }).slice(-5);
   const today = countTodayTasks();
 
   let totalW=0, doneW=0;
@@ -5535,6 +5684,16 @@ function renderDash(){
       }
     });
 
+    // ── Clique na coluna → mostra pendências daquele dia ──
+    canvas.style.cursor='pointer';
+    canvas.onclick=(ev)=>{
+      const rect=canvas.getBoundingClientRect();
+      const mx=ev.clientX-rect.left;
+      const idx=Math.floor((mx-PAD)/slotW);
+      if(idx<0||idx>=days.length) return;
+      showPendentesDia(days[idx], hist[days[idx]]);
+    };
+
     // Axis labels
     if(axisEl){
       axisEl.innerHTML = '';
@@ -5549,89 +5708,9 @@ function renderDash(){
   }
 
   // ── Progress por aba ─────────────────────────────────────
-  const tabsProgressEl = document.getElementById('dash-tabs-progress');
-  if(tabsProgressEl){
-    tabsProgressEl.innerHTML='';
-    const abas=[
-      {label:"Marketplaces", icon:'🛒', items:(appState.tasks.plataformas||[]).flatMap(g=>g.items)},
-      {label:'Rastreios',     icon:'📦', items:appState.tasks.envios||[]},
-      {label:'Produtos',      icon:'🖼️', items:(appState.tasks.anuncios||[]).flatMap(g=>g.items)},
-    ];
-
-    // Vendas WhatsApp
-    const todayKey  = todayStr();
-    const vendasHoje= (appState.vendasWpp && appState.vendasWpp[todayKey]) || 0;
-    const wppCol    = vendasHoje>=4?'var(--green)':vendasHoje>=2?'var(--amber)':'var(--accent)';
-    const wppPct    = Math.min(100, vendasHoje>=4?100:vendasHoje>=2?60:vendasHoje>=1?25:0);
-    const wppRow    = document.createElement('div');
-    wppRow.style.cssText='display:grid;grid-template-columns:160px 1fr 70px;align-items:center;gap:12px;';
-    wppRow.innerHTML=`
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:15px;">💬</span>
-        <span style="font-size:13px;color:var(--text-secondary);font-weight:600;">Vendas WhatsApp</span>
-      </div>
-      <div style="background:var(--bg-active);border-radius:6px;height:10px;overflow:hidden;position:relative;">
-        <div style="height:100%;width:${wppPct}%;background:${wppCol};border-radius:6px;transition:width .6s ease;box-shadow:0 0 8px ${wppCol}66;"></div>
-      </div>
-      <div style="font-size:15px;font-family:var(--font-mono);font-weight:700;color:${wppCol};text-align:right;">${vendasHoje} <span style="font-size:10px;color:var(--text-muted);">pedidos</span></div>`;
-    tabsProgressEl.appendChild(wppRow);
-
-    abas.forEach(a=>{
-      const total = a.items.length;
-      const done  = a.items.filter(i=>i.repeats>1?(i.execs||[]).length>=(i.repeats||1):i.done).length;
-      const pct   = total>0?Math.round((done/total)*100):0;
-      const col   = pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--accent)';
-      const row   = document.createElement('div');
-      row.style.cssText='display:grid;grid-template-columns:160px 1fr 56px;align-items:center;gap:12px;';
-      row.innerHTML=`
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:15px;">${a.icon}</span>
-          <span style="font-size:13px;color:var(--text-secondary);font-weight:600;">${a.label}</span>
-        </div>
-        <div style="background:var(--bg-active);border-radius:6px;height:10px;overflow:hidden;position:relative;">
-          <div style="height:100%;width:${pct}%;background:${col};border-radius:6px;transition:width .6s ease;box-shadow:0 0 8px ${col}66;"></div>
-        </div>
-        <div style="font-size:14px;font-family:var(--font-mono);font-weight:700;color:${col};text-align:right;">${pct}%</div>`;
-      tabsProgressEl.appendChild(row);
-    });
-  }
+  renderProgressoAbas('dash-tabs-progress');
 
   // ── User performance ─────────────────────────────────────
-  const usersGrid = document.getElementById('dash-users-grid');
-  if(usersGrid){
-    usersGrid.innerHTML='';
-    const allToday=[];
-    (appState.tasks.plataformas||[]).forEach(g=>g.items.forEach(i=>allToday.push(i)));
-    (appState.tasks.envios||[]).forEach(i=>allToday.push(i));
-    (appState.tasks.anuncios||[]).forEach(g=>g.items.forEach(i=>allToday.push(i)));
-
-    Object.entries(appState.users).forEach(([key,user])=>{
-      const mine    = allToday.filter(i=>i.doneBy===user.name);
-      const total   = allToday.length;
-      const pct     = total>0?Math.round((mine.length/total)*100):0;
-      const color   = user.color||'#c0392b';
-      const initials= user.initials||(user.name.split(' ')[0]||'').substring(0,2).toUpperCase();
-      const card    = document.createElement('div');
-      card.style.cssText=`background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;position:relative;overflow:hidden;`;
-      card.innerHTML=`
-        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${color};"></div>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;margin-top:6px;">
-          <div style="width:40px;height:40px;border-radius:50%;background:${color}22;border:2px solid ${color};color:${color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">${initials}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="font-size:14px;font-weight:700;letter-spacing:-0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-primary);">${user.name}</div>
-            <div style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px;">${user.master?'⭐ MASTER':'👤 Colaborador'}</div>
-          </div>
-          <div style="font-size:30px;font-weight:700;font-family:var(--font-sans);letter-spacing:-0.04em;color:${color};">${mine.length}</div>
-        </div>
-        <div style="background:var(--bg-surface);border-radius:6px;height:8px;overflow:hidden;margin-bottom:8px;">
-          <div style="height:100%;width:${pct}%;background:${color};border-radius:6px;transition:width .6s ease;box-shadow:0 0 8px ${color}55;"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);font-family:var(--font-mono);">
-          <span>${mine.length} tarefas concluídas</span><span style="color:${color};font-weight:700;">${pct}%</span>
-        </div>`;
-      usersGrid.appendChild(card);
-    });
-  }
 }
 
 /* ── PRESENÇA ONLINE (Firebase) ─────────────────────────────── */
@@ -7100,7 +7179,7 @@ function renderDevStats(){
   const sel=monthSel.value||allMonths[0]||'';
 
   // Count by plataforma
-  const PLT_LIST=['Shopee Suplenium','Shopee Primevitaminas','Merc. Livre Vitalife','Merc. Livre VXShop','Magalu 4Vita','Drog. São Paulo','Drog. Pacheco','Web Continental','RD Marketplace'];
+  const PLT_LIST=['Shopee Suplenium','Shopee Primevitaminas','Merc. Livre Vitalife','Merc. Livre VXShop','Magalu 4Vita','Magalu VixSupps','Drog. São Paulo','Drog. Pacheco','Web Continental','RD Marketplace'];
   statsGrid.innerHTML='';
   PLT_LIST.forEach(plt=>{
     const all=devs.filter(d=>d.plataforma===plt);
@@ -7261,7 +7340,8 @@ function saveAte(){
     ultimaDesc, ultimaData,
     workflow:'aberto',
     criadoEm:editId?undefined:nowTimeStr(),
-    criadoPor:editId?undefined:currentUser.name
+    criadoPor:editId?undefined:currentUser.name,
+    ordemManual:editId?undefined:Date.now()
   };
   if(editId){
     const idx=appState.tasks.atendimentos.findIndex(x=>x.id===editId);
@@ -7269,6 +7349,7 @@ function saveAte(){
       rec.criadoEm=appState.tasks.atendimentos[idx].criadoEm;
       rec.criadoPor=appState.tasks.atendimentos[idx].criadoPor;
       rec.workflow=appState.tasks.atendimentos[idx].workflow;
+      rec.ordemManual=appState.tasks.atendimentos[idx].ordemManual;
       rec.atualizadoPor=currentUser.name;
       rec.atualizadoEm=nowTimeStr();
       appState.tasks.atendimentos[idx]=rec;
@@ -7320,6 +7401,8 @@ function toggleAteFinalizados(){
 function renderAte(){
   const isMaster=currentUser&&currentUser.master;
   const all=appState.tasks.atendimentos||[];
+  all.forEach((d,idx)=>{ if(typeof d.ordemManual!=='number') d.ordemManual=idx; });
+  all.sort((a,b)=>(a.ordemManual||0)-(b.ordemManual||0));
   const active=all.filter(d=>d.workflow!=='finalizado');
   const finalizados=all.filter(d=>d.workflow==='finalizado');
 
@@ -7350,6 +7433,19 @@ function renderAte(){
   active.forEach(d=>{const c=buildAteCard(d,false);if(c)grid.appendChild(c);});
 }
 
+function reorderAtendimentos(draggedId, targetId){
+  const arr = appState.tasks.atendimentos||[];
+  const sorted = arr.slice().sort((a,b)=>(a.ordemManual||0)-(b.ordemManual||0));
+  const fromIdx = sorted.findIndex(x=>x.id===draggedId);
+  const toIdx = sorted.findIndex(x=>x.id===targetId);
+  if(fromIdx===-1||toIdx===-1) return;
+  const [moved] = sorted.splice(fromIdx,1);
+  sorted.splice(toIdx,0,moved);
+  sorted.forEach((item,i)=>{ item.ordemManual = i; });
+  saveState(appState);
+  renderAte();
+}
+
 function buildAteCard(d,isFinalizado){
   const isMaster=currentUser&&currentUser.master;
   const canAte=isMaster||(currentUser&&(currentUser.perms||[]).includes('atendimentos'));
@@ -7361,6 +7457,29 @@ function buildAteCard(d,isFinalizado){
   card.onmouseout=()=>{card.style.transform='';card.style.boxShadow=`0 4px 24px rgba(0,0,0,0.4)${isFinalizado?',0 0 20px rgba(34,197,94,0.08)':''},inset 0 1px 0 rgba(255,255,255,0.08)`;};
   // Shine
   const shine=document.createElement('div');shine.style.cssText='position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);pointer-events:none;';card.appendChild(shine);
+
+  // ── Arrastar para reordenar (só master) ─────────────────────────────
+  if(isMaster && !isFinalizado){
+    card.draggable=true;
+    card.dataset.ateId=d.id;
+    card.style.cursor='grab';
+    card.addEventListener('dragstart',e=>{
+      e.dataTransfer.setData('text/plain', d.id);
+      e.dataTransfer.effectAllowed='move';
+      card.style.opacity='0.4';
+    });
+    card.addEventListener('dragend',()=>{ card.style.opacity=''; });
+    card.addEventListener('dragover',e=>{ e.preventDefault(); card.style.boxShadow='0 0 0 2px var(--accent),0 4px 24px rgba(0,0,0,0.4)'; });
+    card.addEventListener('dragleave',()=>{ card.style.boxShadow=''; });
+    card.addEventListener('drop',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      card.style.boxShadow='';
+      const draggedId=e.dataTransfer.getData('text/plain');
+      if(!draggedId||draggedId===d.id) return;
+      reorderAtendimentos(draggedId, d.id);
+    });
+  }
 
   // Header
   const hdr=document.createElement('div');hdr.style.cssText='display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
