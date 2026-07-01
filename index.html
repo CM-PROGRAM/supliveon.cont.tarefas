@@ -833,6 +833,7 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
               <col style="width:110px;">  <!-- SHP SUPLENIUM 2X -->
               <col style="width:120px;">  <!-- SHP PRIMEVITAMINAS -->
               <col style="width:135px;">  <!-- SHP PRIMEVITAMINAS 2X -->
+              <col style="width:110px;">  <!-- WEB CONTINENTAL -->
               <col style="width:110px;">  <!-- RD MARKETPLACE -->
               <col style="width:95px;">   <!-- MAGALU (VIX) -->
               <col style="width:100px;">  <!-- MAGALU (4VITA) -->
@@ -858,6 +859,7 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
                 <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">SHP SUPLENIUM 2X</th>
                 <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">SHP PRIMEVITAMINAS</th>
                 <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">SHP PRIMEVITAMINAS 2X</th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">WEB CONTINENTAL</th>
                 <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">RD MARKETPLACE</th>
                 <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">MAGALU (VIX)</th>
                 <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">MAGALU (4VITA)</th>
@@ -898,6 +900,7 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
             <div class="input-group"><label>Imagens</label><select id="conf-s-imagens" class="conf-status-sel"></select></div>
             <div class="input-group"><label>SHP Primevitaminas</label><select id="conf-s-shp1" class="conf-status-sel"></select></div>
             <div class="input-group"><label>SHP Primevitaminas 2X</label><select id="conf-s-shp2" class="conf-status-sel"></select></div>
+            <div class="input-group"><label>Web Continental</label><select id="conf-s-webcont" class="conf-status-sel"></select></div>
             <div class="input-group"><label>RD Marketplace</label><select id="conf-s-rd" class="conf-status-sel"></select></div>
             <div class="input-group"><label>Magalu (VIX)</label><select id="conf-s-mgvix" class="conf-status-sel"></select></div>
             <div class="input-group"><label>Magalu (4VITA)</label><select id="conf-s-mg4v" class="conf-status-sel"></select></div>
@@ -1684,6 +1687,7 @@ function loadLocal(){
     if(s.tasks&&s.tasks.anuncios&&Array.isArray(s.tasks.anuncios)){
       if(!s.tasks.anuncios.some(g=>g.id==='anu_geral')
          || s.tasks.anuncios.some(g=>g.id==='anu_conf')
+         || s.tasks.anuncios.some(g=>g.id==='anu_geral'&&!g.items?.some(i=>i.id==='anu_wc'))
          || s.tasks.anuncios.some(g=>g.id==='anu_geral'&&g.group!=='ANÚNCIOS MARKETPLACES')
          || s.tasks.anuncios.some(g=>g.id==='anu_geral'&&g.items?.some(i=>i.id==='anu_vl'&&!i.btns))
          || s.tasks.anuncios.some(g=>g.id==='anu_geral'&&g.items?.some(i=>i.id==='anu_vx'&&!i.btns))
@@ -1883,6 +1887,7 @@ function applyRemoteState(data){
   if(data.tasks.anuncios&&Array.isArray(data.tasks.anuncios)){
     if(!data.tasks.anuncios.some(g=>g.id==='anu_geral')
        || data.tasks.anuncios.some(g=>g.id==='anu_conf')
+       || data.tasks.anuncios.some(g=>g.id==='anu_geral'&&!g.items?.some(i=>i.id==='anu_wc'))
        || data.tasks.anuncios.some(g=>g.id==='anu_geral'&&g.group!=='ANÚNCIOS MARKETPLACES')
        || data.tasks.anuncios.some(g=>g.id==='anu_geral'&&g.items?.some(i=>i.id==='anu_vl'&&!i.btns))
        || data.tasks.anuncios.some(g=>g.id==='anu_geral'&&g.items?.some(i=>i.id==='anu_vx'&&!i.btns))
@@ -3336,6 +3341,15 @@ function renderPlt(){
         });
       }
 
+      // Cronômetro
+      const timerBtn=makeTimerBtn(tk);
+      timerBtn.style.fontSize='9px';
+      timerBtn.style.fontWeight='700';
+      timerBtn.style.padding='2px 7px';
+      timerBtn.style.borderRadius='10px';
+      timerBtn.style.whiteSpace='nowrap';
+      acts.appendChild(timerBtn);
+
       // Botão concluir/executar compacto
       if(repeats>1){
         if(!isDone){
@@ -3592,8 +3606,6 @@ function renderAnu(){
         if(!tk.done) applyPltBadge(badge,tk.text); else{badge.style.textDecoration='line-through';badge.style.color='var(--text-muted)';}
         txt.appendChild(badge);txtw.appendChild(txt);
         const actions=document.createElement('div');actions.className='task-actions';
-        actions.appendChild(makeTimerBtn(tk));
-        actions.appendChild(makeCompleteBtn(tk,()=>markGroupDone('anuncios',g,tk.id),()=>unmarkGroupTask('anuncios',g,tk.id)));
         row.appendChild(dot);row.appendChild(txtw);row.appendChild(actions);body.appendChild(row);
       });
       // cards 3D para itens com link/btns
@@ -3690,6 +3702,7 @@ const CONF_PLATS = [
   {key:'shpsuple2x',label:'SHP Suplenium 2X'},
   {key:'shp1',      label:'SHP Primevitaminas'},
   {key:'shp2',      label:'SHP Primevitaminas 2X'},
+  {key:'webcont',   label:'Web Continental'},
   {key:'rd',        label:'RD Mktp'},
   {key:'mgvix',     label:'Magalu (VIX)'},
   {key:'mg4v',      label:'Magalu (4VITA)'},
