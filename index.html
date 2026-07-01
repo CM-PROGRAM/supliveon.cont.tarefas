@@ -299,7 +299,7 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
 
 /* CONTENT */
 .content-area{flex:1;overflow-y:auto;overflow-x:hidden;}
-.content{padding:24px 28px;max-width:1400px;margin:0 auto;width:100%;}
+.content{padding:24px 28px;max-width:1900px;margin:0 auto;width:100%;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
 @media(max-width:700px){.sidebar{width:180px;min-width:180px;}.tab-btn{font-size:13px;}}
@@ -796,8 +796,8 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
         <span class="section-title">Produtos</span>
         <div class="live-badge"><div class="live-dot"></div>Tempo real</div>
       </div>
-      <div class="date-header" id="anu-date"></div>
-      <div id="anu-tasks"></div>
+      <div class="date-header" id="anu-date" style="display:none;"></div>
+      <div id="anu-tasks" style="display:none;"></div>
 
       <!-- CONFERENCIA DE ENTRADAS -->
       <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);" id="conf-entradas-wrap">
@@ -815,7 +815,7 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
         </div>
         <!-- UMA única tabela com scroll horizontal — thead sticky dentro do scroll -->
         <div id="conf-body-scroll" style="overflow-x:auto;overflow-y:auto;max-height:70vh;">
-          <table id="conf-table" style="width:100%;border-collapse:collapse;font-size:12px;min-width:1400px;table-layout:fixed;">
+          <table id="conf-table" style="width:100%;border-collapse:collapse;font-size:12px;min-width:2050px;table-layout:fixed;">
             <colgroup>
               <col style="width:72px;">   <!-- ULT. ATUAL. -->
               <col style="width:90px;">   <!-- SKU -->
@@ -825,20 +825,20 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
               <col style="width:90px;">   <!-- IMAGENS -->
               <col style="width:90px;">   <!-- ATACADO -->
               <col style="width:80px;">   <!-- LOJA INT. -->
-              <col style="width:90px;">   <!-- M.L VITALIFE -->
-              <col style="width:105px;">  <!-- M.L VITALIFE 2X -->
-              <col style="width:90px;">   <!-- M.L VXSHOP -->
-              <col style="width:100px;">  <!-- M.L VXSHOP 2X -->
-              <col style="width:100px;">  <!-- SHP SUPLENIUM -->
-              <col style="width:110px;">  <!-- SHP SUPLENIUM 2X -->
-              <col style="width:120px;">  <!-- SHP PRIMEVITAMINAS -->
-              <col style="width:135px;">  <!-- SHP PRIMEVITAMINAS 2X -->
-              <col style="width:110px;">  <!-- WEB CONTINENTAL -->
-              <col style="width:110px;">  <!-- RD MARKETPLACE -->
-              <col style="width:95px;">   <!-- MAGALU (VIX) -->
-              <col style="width:100px;">  <!-- MAGALU (4VITA) -->
-              <col style="width:100px;">  <!-- DROG PACHECO -->
-              <col style="width:100px;">  <!-- DROG S. PAULO -->
+              <col style="width:170px;">  <!-- MERCADO LIVRE VITALIFE -->
+              <col style="width:190px;">  <!-- MERCADO LIVRE VITALIFE 2X -->
+              <col style="width:170px;">  <!-- MERCADO LIVRE VXSHOP -->
+              <col style="width:190px;">  <!-- MERCADO LIVRE VXSHOP 2X -->
+              <col style="width:150px;">  <!-- SHOPEE SUPLENIUM -->
+              <col style="width:100px;">  <!-- SHP Suple 2x -->
+              <col style="width:175px;">  <!-- SHOPEE PRIMEVITAMINAS -->
+              <col style="width:105px;">  <!-- SHP Prime 2X -->
+              <col style="width:90px;">   <!-- WEB CO -->
+              <col style="width:135px;">  <!-- RD MARKETPLACE -->
+              <col style="width:110px;">  <!-- MAGALU VIX -->
+              <col style="width:115px;">  <!-- MAGALU 4VITA -->
+              <col style="width:100px;">  <!-- D. Pacheco -->
+              <col style="width:105px;">  <!-- D. São Paulo -->
               <col style="width:70px;">   <!-- AÇÕES -->
             </colgroup>
             <thead id="conf-thead">
@@ -848,23 +848,23 @@ header{background:linear-gradient(135deg,rgba(19,21,28,0.95) 0%,rgba(13,14,18,0.
                 <th style="padding:8px 10px;text-align:left;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;left:162px;background:var(--bg-surface);z-index:4;">EAN</th>
                 <th style="padding:8px 10px;text-align:left;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);position:sticky;top:0;left:272px;background:var(--bg-surface);z-index:4;">PRODUTO</th>
                 <th style="padding:8px 10px;text-align:left;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;left:492px;background:var(--bg-surface);z-index:4;border-right:2px solid var(--border-light);"><div style="display:grid;grid-template-columns:auto 1fr;align-items:center;">MARCA<button type="button" id="conf-marca-add-btn-th" onclick="addConfMarca()" title="Adicionar nova marca" style="display:none;justify-self:center;flex-shrink:0;width:16px;height:16px;line-height:14px;padding:0;background:linear-gradient(135deg,rgba(59,130,246,0.25),rgba(59,130,246,0.1));border:1px solid rgba(59,130,246,0.5);border-radius:4px;color:#93c5fd;font-size:12px;font-weight:700;cursor:pointer;text-transform:none;letter-spacing:0;vertical-align:middle;">+</button></div></th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">IMAGENS</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">ATACADO</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">LOJA INT.</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">M.L VITALIFE</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">M.L VITALIFE 2X</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">M.L VXSHOP</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">M.L VXSHOP 2X</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">SHP SUPLENIUM</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">SHP SUPLENIUM 2X</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">SHP PRIMEVITAMINAS</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">SHP PRIMEVITAMINAS 2X</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">WEB CONTINENTAL</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">RD MARKETPLACE</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">MAGALU (VIX)</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">MAGALU (4VITA)</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">DROG PACHECO</th>
-                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">DROG S. PAULO</th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://www.canva.com/" target="_blank" rel="noopener" style="background:#6d28d9;color:#ffffff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">IMAGENS</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><span style="background:#000000;color:#ffffff;padding:1px 8px;border-radius:4px;display:inline-block;">ATACADO</span></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://app.lojaintegrada.com.br/painel" target="_blank" rel="noopener" style="background:#4b5320;color:#ffffff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">LOJA INT.</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://app.mercadoturbo.com.br/sistema/anuncio/anuncios#" target="_blank" rel="noopener" style="background:#d4a000;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">MERCADO LIVRE VITALIFE</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://app.mercadoturbo.com.br/sistema/anuncio/anuncios#" target="_blank" rel="noopener" style="background:#d4a000;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">MERCADO LIVRE VITALIFE 2X</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://app.mercadoturbo.com.br/sistema/anuncio/anuncios#" target="_blank" rel="noopener" style="background:#d4a000;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">MERCADO LIVRE VXSHOP</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://app.mercadoturbo.com.br/sistema/anuncio/anuncios#" target="_blank" rel="noopener" style="background:#d4a000;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">MERCADO LIVRE VXSHOP 2X</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://seller.shopee.com.br/portal/product/list/all?operationSortBy=recommend_v2" target="_blank" rel="noopener" style="background:#f97316;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">SHOPEE SUPLENIUM</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://seller.shopee.com.br/portal/product/list/all?operationSortBy=recommend_v2" target="_blank" rel="noopener" style="background:#f97316;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-transform:none;text-decoration:none;cursor:pointer;">SHP Suple 2x</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://seller.shopee.com.br/portal/product/list/live/all?operationSortBy=recommend_v2" target="_blank" rel="noopener" style="background:#f97316;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">SHOPEE PRIMEVITAMINAS</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://seller.shopee.com.br/portal/product/list/live/all?operationSortBy=recommend_v2" target="_blank" rel="noopener" style="background:#f97316;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-transform:none;text-decoration:none;cursor:pointer;">SHP Prime 2X</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://portal.webcontinental.com.br/#/listar/produtos" target="_blank" rel="noopener" style="background:#ffffff;color:#0055a5;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">WEB CO</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://portal.rdmarketplace.com.br/app/products" target="_blank" rel="noopener" style="background:#2d7a3a;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">RD MARKETPLACE</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://seller.magalu.com/products/" target="_blank" rel="noopener" style="background:#3b5bdb;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">MAGALU VIX</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://seller.magalu.com/products/" target="_blank" rel="noopener" style="background:#3b5bdb;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">MAGALU 4VITA</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://marketplace.drogariaspacheco.com.br/v3/produto/gerenciar" target="_blank" rel="noopener" style="background:#e00000;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">D. Pacheco</a></th>
+                <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;"><a href="https://marketplace.drogariasaopaulo.com.br/v3/produto/gerenciar" target="_blank" rel="noopener" style="background:#00aaff;color:#fff;padding:1px 8px;border-radius:4px;display:inline-block;text-decoration:none;cursor:pointer;">D. São Paulo</a></th>
                 <th style="padding:8px 10px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--bg-surface);z-index:3;">AÇÕES</th>
               </tr>
             </thead>
